@@ -35,3 +35,4 @@ Thumbs.db
 work-schedule-app-frontend/
 goBackend/.env
 goBackend/bff-gateway/.env
+goBackend/implementplan.md
