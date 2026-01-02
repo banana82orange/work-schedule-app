@@ -1,0 +1,195 @@
+syntax = "proto3";
+
+package project;
+
+option go_package = "github.com/portfolio/proto/project";
+
+import "google/protobuf/timestamp.proto";
+
+// Project Service
+service ProjectService {
+  // Project CRUD
+  rpc CreateProject(CreateProjectRequest) returns (ProjectResponse);
+  rpc GetProject(GetProjectRequest) returns (ProjectResponse);
+  rpc UpdateProject(UpdateProjectRequest) returns (ProjectResponse);
+  rpc DeleteProject(DeleteProjectRequest) returns (Empty);
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+
+  // Skills
+  rpc CreateSkill(CreateSkillRequest) returns (SkillResponse);
+  rpc ListSkills(Empty) returns (ListSkillsResponse);
+  rpc AddProjectSkill(AddProjectSkillRequest) returns (Empty);
+  rpc RemoveProjectSkill(RemoveProjectSkillRequest) returns (Empty);
+
+  // Tech Stack
+  rpc AddProjectTech(AddProjectTechRequest) returns (Empty);
+  rpc RemoveProjectTech(RemoveProjectTechRequest) returns (Empty);
+
+  // Images
+  rpc AddProjectImage(AddProjectImageRequest) returns (ProjectImageResponse);
+  rpc RemoveProjectImage(RemoveProjectImageRequest) returns (Empty);
+  rpc ListProjectImages(ListProjectImagesRequest) returns (ListProjectImagesResponse);
+
+  // Links
+  rpc AddProjectLink(AddProjectLinkRequest) returns (ProjectLinkResponse);
+  rpc RemoveProjectLink(RemoveProjectLinkRequest) returns (Empty);
+  rpc ListProjectLinks(ListProjectLinksRequest) returns (ListProjectLinksResponse);
+}
+
+message Empty {}
+
+// Project messages
+message Project {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+  string status = 6;
+  repeated Skill skills = 7;
+  repeated string tech_stack = 8;
+  repeated ProjectImage images = 9;
+  repeated ProjectLink links = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message CreateProjectRequest {
+  string name = 1;
+  string description = 2;
+  google.protobuf.Timestamp start_date = 3;
+  google.protobuf.Timestamp end_date = 4;
+  string status = 5;
+}
+
+message GetProjectRequest {
+  int64 id = 1;
+}
+
+message ProjectResponse {
+  Project project = 1;
+}
+
+message UpdateProjectRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp start_date = 4;
+  google.protobuf.Timestamp end_date = 5;
+  string status = 6;
+}
+
+message DeleteProjectRequest {
+  int64 id = 1;
+}
+
+message ListProjectsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string status = 3; // optional filter
+}
+
+message ListProjectsResponse {
+  repeated Project projects = 1;
+  int32 total = 2;
+}
+
+// Skill messages
+message Skill {
+  int64 id = 1;
+  string name = 2;
+}
+
+message CreateSkillRequest {
+  string name = 1;
+}
+
+message SkillResponse {
+  Skill skill = 1;
+}
+
+message ListSkillsResponse {
+  repeated Skill skills = 1;
+}
+
+message AddProjectSkillRequest {
+  int64 project_id = 1;
+  int64 skill_id = 2;
+}
+
+message RemoveProjectSkillRequest {
+  int64 project_id = 1;
+  int64 skill_id = 2;
+}
+
+// Tech Stack messages
+message AddProjectTechRequest {
+  int64 project_id = 1;
+  string tech_name = 2;
+}
+
+message RemoveProjectTechRequest {
+  int64 project_id = 1;
+  string tech_name = 2;
+}
+
+// Image messages
+message ProjectImage {
+  int64 id = 1;
+  int64 project_id = 2;
+  string image_url = 3;
+  string description = 4;
+  google.protobuf.Timestamp uploaded_at = 5;
+}
+
+message AddProjectImageRequest {
+  int64 project_id = 1;
+  string image_url = 2;
+  string description = 3;
+}
+
+message ProjectImageResponse {
+  ProjectImage image = 1;
+}
+
+message RemoveProjectImageRequest {
+  int64 id = 1;
+}
+
+message ListProjectImagesRequest {
+  int64 project_id = 1;
+}
+
+message ListProjectImagesResponse {
+  repeated ProjectImage images = 1;
+}
+
+// Link messages
+message ProjectLink {
+  int64 id = 1;
+  int64 project_id = 2;
+  string link_url = 3;
+  string link_type = 4; // github, live, document
+}
+
+message AddProjectLinkRequest {
+  int64 project_id = 1;
+  string link_url = 2;
+  string link_type = 3;
+}
+
+message ProjectLinkResponse {
+  ProjectLink link = 1;
+}
+
+message RemoveProjectLinkRequest {
+  int64 id = 1;
+}
+
+message ListProjectLinksRequest {
+  int64 project_id = 1;
+}
+
+message ListProjectLinksResponse {
+  repeated ProjectLink links = 1;
+}

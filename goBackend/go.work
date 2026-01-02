@@ -1,0 +1,11 @@
+go 1.21
+
+use (
+	./bff-gateway
+	./services/analytics-service
+	./services/auth-service
+	./services/media-service
+	./services/project-service
+	./services/task-service
+	./shared
+)

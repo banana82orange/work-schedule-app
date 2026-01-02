@@ -1,0 +1,233 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "github.com/portfolio/proto/task";
+
+import "google/protobuf/timestamp.proto";
+
+// Task Service
+service TaskService {
+  // Task CRUD
+  rpc CreateTask(CreateTaskRequest) returns (TaskResponse);
+  rpc GetTask(GetTaskRequest) returns (TaskResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (TaskResponse);
+  rpc DeleteTask(DeleteTaskRequest) returns (Empty);
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+
+  // Subtasks
+  rpc CreateSubtask(CreateSubtaskRequest) returns (SubtaskResponse);
+  rpc UpdateSubtask(UpdateSubtaskRequest) returns (SubtaskResponse);
+  rpc DeleteSubtask(DeleteSubtaskRequest) returns (Empty);
+  rpc ListSubtasks(ListSubtasksRequest) returns (ListSubtasksResponse);
+
+  // Comments
+  rpc AddComment(AddCommentRequest) returns (CommentResponse);
+  rpc DeleteComment(DeleteCommentRequest) returns (Empty);
+  rpc ListComments(ListCommentsRequest) returns (ListCommentsResponse);
+
+  // Attachments
+  rpc AddAttachment(AddAttachmentRequest) returns (AttachmentResponse);
+  rpc DeleteAttachment(DeleteAttachmentRequest) returns (Empty);
+  rpc ListAttachments(ListAttachmentsRequest) returns (ListAttachmentsResponse);
+
+  // Tags
+  rpc CreateTag(CreateTagRequest) returns (TagResponse);
+  rpc ListTags(Empty) returns (ListTagsResponse);
+  rpc AddTaskTag(AddTaskTagRequest) returns (Empty);
+  rpc RemoveTaskTag(RemoveTaskTagRequest) returns (Empty);
+}
+
+message Empty {}
+
+// Task messages
+message Task {
+  int64 id = 1;
+  int64 project_id = 2;
+  string title = 3;
+  string description = 4;
+  string status = 5; // Todo, InProgress, Done
+  int32 priority = 6;
+  int64 assigned_to = 7;
+  google.protobuf.Timestamp due_date = 8;
+  repeated Subtask subtasks = 9;
+  repeated Tag tags = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message CreateTaskRequest {
+  int64 project_id = 1;
+  string title = 2;
+  string description = 3;
+  string status = 4;
+  int32 priority = 5;
+  int64 assigned_to = 6;
+  google.protobuf.Timestamp due_date = 7;
+}
+
+message GetTaskRequest {
+  int64 id = 1;
+}
+
+message TaskResponse {
+  Task task = 1;
+}
+
+message UpdateTaskRequest {
+  int64 id = 1;
+  string title = 2;
+  string description = 3;
+  string status = 4;
+  int32 priority = 5;
+  int64 assigned_to = 6;
+  google.protobuf.Timestamp due_date = 7;
+}
+
+message DeleteTaskRequest {
+  int64 id = 1;
+}
+
+message ListTasksRequest {
+  int64 project_id = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  string status = 4;
+  int64 assigned_to = 5;
+}
+
+message ListTasksResponse {
+  repeated Task tasks = 1;
+  int32 total = 2;
+}
+
+// Subtask messages
+message Subtask {
+  int64 id = 1;
+  int64 task_id = 2;
+  string title = 3;
+  string status = 4;
+  int64 assigned_to = 5;
+  google.protobuf.Timestamp due_date = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message CreateSubtaskRequest {
+  int64 task_id = 1;
+  string title = 2;
+  int64 assigned_to = 3;
+  google.protobuf.Timestamp due_date = 4;
+}
+
+message SubtaskResponse {
+  Subtask subtask = 1;
+}
+
+message UpdateSubtaskRequest {
+  int64 id = 1;
+  string title = 2;
+  string status = 3;
+  int64 assigned_to = 4;
+  google.protobuf.Timestamp due_date = 5;
+}
+
+message DeleteSubtaskRequest {
+  int64 id = 1;
+}
+
+message ListSubtasksRequest {
+  int64 task_id = 1;
+}
+
+message ListSubtasksResponse {
+  repeated Subtask subtasks = 1;
+}
+
+// Comment messages
+message Comment {
+  int64 id = 1;
+  int64 task_id = 2;
+  int64 user_id = 3;
+  string comment = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message AddCommentRequest {
+  int64 task_id = 1;
+  int64 user_id = 2;
+  string comment = 3;
+}
+
+message CommentResponse {
+  Comment comment = 1;
+}
+
+message DeleteCommentRequest {
+  int64 id = 1;
+}
+
+message ListCommentsRequest {
+  int64 task_id = 1;
+}
+
+message ListCommentsResponse {
+  repeated Comment comments = 1;
+}
+
+// Attachment messages
+message Attachment {
+  int64 id = 1;
+  int64 task_id = 2;
+  string file_url = 3;
+  google.protobuf.Timestamp uploaded_at = 4;
+}
+
+message AddAttachmentRequest {
+  int64 task_id = 1;
+  string file_url = 2;
+}
+
+message AttachmentResponse {
+  Attachment attachment = 1;
+}
+
+message DeleteAttachmentRequest {
+  int64 id = 1;
+}
+
+message ListAttachmentsRequest {
+  int64 task_id = 1;
+}
+
+message ListAttachmentsResponse {
+  repeated Attachment attachments = 1;
+}
+
+// Tag messages
+message Tag {
+  int64 id = 1;
+  string name = 2;
+}
+
+message CreateTagRequest {
+  string name = 1;
+}
+
+message TagResponse {
+  Tag tag = 1;
+}
+
+message ListTagsResponse {
+  repeated Tag tags = 1;
+}
+
+message AddTaskTagRequest {
+  int64 task_id = 1;
+  int64 tag_id = 2;
+}
+
+message RemoveTaskTagRequest {
+  int64 task_id = 1;
+  int64 tag_id = 2;
+}

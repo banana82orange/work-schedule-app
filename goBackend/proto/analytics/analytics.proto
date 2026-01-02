@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package analytics;
+
+option go_package = "github.com/portfolio/proto/analytics";
+
+import "google/protobuf/timestamp.proto";
+
+// Analytics Service
+service AnalyticsService {
+  // Project Views
+  rpc RecordProjectView(RecordProjectViewRequest) returns (Empty);
+  rpc GetProjectViews(GetProjectViewsRequest) returns (ProjectViewsResponse);
+
+  // Task Activity
+  rpc RecordTaskActivity(RecordTaskActivityRequest) returns (Empty);
+  rpc GetTaskActivities(GetTaskActivitiesRequest) returns (TaskActivitiesResponse);
+
+  // Project Stats
+  rpc GetProjectStats(GetProjectStatsRequest) returns (ProjectStatsResponse);
+  rpc UpdateProjectStats(UpdateProjectStatsRequest) returns (ProjectStatsResponse);
+  rpc GetDashboardStats(GetDashboardStatsRequest) returns (DashboardStatsResponse);
+}
+
+message Empty {}
+
+// Project View messages
+message ProjectView {
+  int64 id = 1;
+  int64 project_id = 2;
+  int64 user_id = 3;
+  google.protobuf.Timestamp viewed_at = 4;
+}
+
+message RecordProjectViewRequest {
+  int64 project_id = 1;
+  int64 user_id = 2;
+}
+
+message GetProjectViewsRequest {
+  int64 project_id = 1;
+  google.protobuf.Timestamp start_date = 2;
+  google.protobuf.Timestamp end_date = 3;
+}
+
+message ProjectViewsResponse {
+  repeated ProjectView views = 1;
+  int32 total_views = 2;
+}
+
+// Task Activity messages
+message TaskActivity {
+  int64 id = 1;
+  int64 task_id = 2;
+  int64 user_id = 3;
+  string action = 4; // created, updated, completed
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message RecordTaskActivityRequest {
+  int64 task_id = 1;
+  int64 user_id = 2;
+  string action = 3;
+}
+
+message GetTaskActivitiesRequest {
+  int64 task_id = 1;
+  int64 project_id = 2; // optional: get all activities for a project
+}
+
+message TaskActivitiesResponse {
+  repeated TaskActivity activities = 1;
+}
+
+// Project Stats messages
+message ProjectStats {
+  int64 project_id = 1;
+  int32 total_tasks = 2;
+  int32 completed_tasks = 3;
+  double progress_percent = 4;
+  google.protobuf.Timestamp last_updated = 5;
+}
+
+message GetProjectStatsRequest {
+  int64 project_id = 1;
+}
+
+message ProjectStatsResponse {
+  ProjectStats stats = 1;
+}
+
+message UpdateProjectStatsRequest {
+  int64 project_id = 1;
+  int64 total_tasks = 2;
+  int64 completed_tasks = 3;
+}
+
+// Dashboard Stats messages
+message GetDashboardStatsRequest {
+  int64 user_id = 1; // optional: filter by user
+}
+
+message DashboardStatsResponse {
+  int32 total_projects = 1;
+  int32 active_projects = 2;
+  int32 total_tasks = 3;
+  int32 completed_tasks = 4;
+  int32 pending_tasks = 5;
+  repeated ProjectStats project_stats = 6;
+}

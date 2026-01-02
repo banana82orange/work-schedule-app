@@ -1,0 +1,20 @@
+# Ignore go.work to avoid path conflicts in Docker
+go.work
+go.work.sum
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Build artifacts
+bin/
+*.exe
+
+# Logs
+*.log

@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "github.com/portfolio/proto/auth";
+
+import "google/protobuf/timestamp.proto";
+
+// Auth Service
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (Empty);
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+
+  // Role management
+  rpc CreateRole(CreateRoleRequest) returns (RoleResponse);
+  rpc GetRoles(Empty) returns (ListRolesResponse);
+
+  // Project access
+  rpc GetUserProjectAccess(GetUserProjectAccessRequest) returns (UserProjectAccessResponse);
+  rpc SetUserProjectAccess(SetUserProjectAccessRequest) returns (Empty);
+  rpc RemoveUserProjectAccess(RemoveUserProjectAccessRequest) returns (Empty);
+}
+
+message Empty {}
+
+// User messages
+message User {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string role = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+  string role = 4; // optional, defaults to "user"
+}
+
+message RegisterResponse {
+  User user = 1;
+  string token = 2;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  User user = 1;
+  string token = 2;
+}
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  User user = 2;
+}
+
+message GetUserRequest {
+  int64 id = 1;
+}
+
+message UserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string role = 4;
+}
+
+message DeleteUserRequest {
+  int64 id = 1;
+}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 total = 2;
+}
+
+// Role messages
+message Role {
+  int64 id = 1;
+  string name = 2;
+}
+
+message CreateRoleRequest {
+  string name = 1;
+}
+
+message RoleResponse {
+  Role role = 1;
+}
+
+message ListRolesResponse {
+  repeated Role roles = 1;
+}
+
+// Project Access messages
+message UserProjectAccess {
+  int64 user_id = 1;
+  int64 project_id = 2;
+  string access_level = 3; // read, write, admin
+}
+
+message GetUserProjectAccessRequest {
+  int64 user_id = 1;
+}
+
+message UserProjectAccessResponse {
+  repeated UserProjectAccess accesses = 1;
+}
+
+message SetUserProjectAccessRequest {
+  int64 user_id = 1;
+  int64 project_id = 2;
+  string access_level = 3;
+}
+
+message RemoveUserProjectAccessRequest {
+  int64 user_id = 1;
+  int64 project_id = 2;
+}
