@@ -1,4 +1,5 @@
-.PHONY: all proto build run test clean docker-up docker-down deps help
+.PHONY: all proto build run run-all test clean docker-up docker-down deps help
+
 
 # ======================
 # Variables
@@ -106,8 +107,23 @@ run:
 	@echo "Running $(service)..."
 	@echo "services/$(service)..."
 	@cd services/$(service) && go run ./cmd/main.go
-
-
+ifeq ($(OS),Windows_NT)
+SHELL := C:/Program Files/Git/bin/bash.exe
+run-all:
+	@for svc in $(SERVICES); do \
+		APP_BASE_DIR=$(CURDIR)/services/$$svc; \
+		(cd $(CURDIR)/services/$$svc && go run ./cmd/main.go) & \
+	done; \
+	wait
+else
+run-all:
+	@cd $(CURDIR) && \
+	for svc in $(SERVICES); do \
+		echo "Running $$svc..."; \
+		cd services/$$svc && go run ./cmd/main.go & \
+	done; \
+	wait
+endif
 test:
 	@echo "Running tests..."
 	@go test ./... -v
